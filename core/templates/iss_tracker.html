@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ISS Live Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+  <!-- Custom CSS -->
+  <style>
+    body {
+      margin: 0;
+      background: #0d1117;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    #map {
+      height: 90vh;
+      width: 100%;
+    }
+    nav {
+      background: #161b22;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
+      font-weight: bold;
+      border-bottom: 2px solid #30363d;
+      flex-wrap: wrap;
+    }
+    .nav-title {
+      font-size: 20px;
+      letter-spacing: 1px;
+    }
+    .info-box {
+      display: flex;
+      gap: 20px;
+      padding: 10px 20px;
+      background: #161b22;
+      border-top: 1px solid #30363d;
+      font-size: 14px;
+      flex-wrap: wrap;
+    }
+    .info-item {
+      white-space: nowrap;
+    }
+  </style>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-title">🌍 ISS Live Tracker</div>
+    <div class="info-box" id="navbar-info"></div>
+  </nav>
+
+  <div id="map"></div>
+
+  <!-- JS Logic -->
+  <script>
+    const map = L.map('map').setView([0, 0], 2);
+
+    // OpenStreetMap Layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // ISS Icon
+    const issIcon = L.icon({
+      iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/International_Space_Station.svg',
+      iconSize: [50, 32],
+      iconAnchor: [25, 16]
+    });
+
+    let marker = L.marker([0, 0], {icon: issIcon}).addTo(map);
+    let firstLoad = true;
+
+    async function getISS() {
+      const res = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+      const data = await res.json();
+
+      const { latitude, longitude, velocity, altitude, visibility } = data;
+
+      marker.setLatLng([latitude, longitude]);
+
+      if (firstLoad) {
+        map.setView([latitude, longitude], 3);
+        firstLoad = false;
+      }
+
+      // Navbar Info
+      document.getElementById('navbar-info').innerHTML = `
+        <div class="info-item">🌐 Lat: ${latitude.toFixed(2)}°</div>
+        <div class="info-item">🌐 Long: ${longitude.toFixed(2)}°</div>
+        <div class="info-item">🚀 Speed: ${velocity.toFixed(2)} km/h</div>
+        <div class="info-item">🛰️ Alt: ${altitude.toFixed(2)} km</div>
+        <div class="info-item">👁️ Visibility: ${visibility.toUpperCase()}</div>
+      `;
+    }
+
+    getISS();
+    setInterval(getISS, 2000); 
+  </script>
+</body>
+</html>

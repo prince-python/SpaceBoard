@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mars Rover Photo Gallery</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: radial-gradient(ellipse at center, #0d0d0d 0%, #000000 100%);
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .navbar {
+      background-color: #1a1a1a;
+      border-bottom: 1px solid #333;
+    }
+    .nav-link, .navbar-brand {
+      color: #ffffff !important;
+    }
+    .nav-link:hover {
+      color: #00ffe1 !important;
+    }
+    .btn-rover {
+      margin-right: 8px;
+    }
+    .card {
+      background-color: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+    .card-body {
+      font-size: 0.9rem;
+    }
+    .card-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    .footer {
+      background-color: #111;
+      color: #777;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+      font-size: 0.9rem;
+    }
+    .date-picker {
+      background-color: #222;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+    .btn-latest {
+      background-color: #00ffe1;
+      color: black;
+      font-weight: bold;
+    }
+    .btn-latest:hover {
+      background-color: #00bbaa;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">🚀 Mars Dashboard</a>
+      <div class="d-flex flex-wrap">
+        <a class="btn btn-outline-info btn-sm btn-rover" href="?rover=curiosity">Curiosity</a>
+        <a class="btn btn-outline-info btn-sm btn-rover" href="?rover=perseverance">Perseverance</a>
+        <form method="get" class="d-flex align-items-center ms-2">
+          <input type="date" name="earth_date" class="date-picker me-2">
+          <button class="btn btn-outline-light btn-sm" type="submit">🔍 Search</button>
+        </form>
+        <a class="btn btn-latest btn-sm ms-2" href="?latest=true">📅 Latest Image</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="container text-light py-4">
+    <h2 class="text-center text-white mb-4">📸 Mars Rover Photo Gallery</h2>
+    <div class="row">
+      {% for photo in photos %}
+        <div class="col-md-4 mb-4">
+          <div class="card">
+            <img src="{{ photo.img_src }}" class="card-img-top" alt="Mars Rover">
+            <div class="card-body">
+              <h5 class="card-title text-white">📷 {{ photo.camera.full_name }}</h5>
+              <p class="card-text text-white">🚀 Rover: <b>{{ photo.rover.name }}</b><br>🌍 Earth Date: {{ photo.earth_date }}</p>
+              <div class="card-buttons">
+                <a href="{{ photo.img_src }}" download class="btn btn-outline-success btn-sm">⬇️ Download</a>
+                <a href="{{ photo.img_src }}" target="_blank" class="btn btn-outline-warning btn-sm">🔍 Full Screen</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-center">🚫 No photos found for selected rover or date.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Made with ❤️ by Ramcharan for Mars Explorers | NASA Public API Used
+  </div>
+
+</body>
+</html>
