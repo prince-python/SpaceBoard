@@ -1,5 +1,5 @@
 
-# Create your views here.
+# Create your views here
 from django.shortcuts import render
 
 def landing_page(request):
